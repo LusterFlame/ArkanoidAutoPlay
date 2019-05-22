@@ -1,7 +1,7 @@
 import pickle
 
 data_list = []
-for temp in range (1, 16):
+for temp in range (1, 20):
     pickleFileName = "ml_lvl" + str(temp) + ".pickle"
     with open(pickleFileName, "rb") as f:
         data_list += pickle.load(f)
@@ -13,7 +13,7 @@ Status = []
 Ballposition = []
 PlatformPosition = []
 Bricks = []
-for j in range(0, 10):
+for j in range(0, 7):
     for i in range(0, len(data_list)):
         Frame.append(data_list[i].frame)
         Status.append(data_list[i].status)
@@ -35,10 +35,15 @@ for temp in range(0, len(instruct) - 10):
             MovingAlot = False
     if MovingAlot:
         instruct[temp] *= 2
+# Get oping up or goin down
+BallY = np.array(Ballposition)[:, 1][:, np.newaxis]
+BallY_next = BallY[1:, :]
+instructB = (BallY_next - BallY[0:len(BallY_next), 0][:, np.newaxis]) / 5
+
 
 # Setting x and y
 Ballarray = np.array(Ballposition[:-1])
-x = np.hstack((Ballarray, PlatX[0:-1, 0][:, np.newaxis], ))
+x = np.hstack((Ballarray, PlatX[0:-1, 0][:, np.newaxis], instructB))
 y = instruct
 
 # Using Random Forest

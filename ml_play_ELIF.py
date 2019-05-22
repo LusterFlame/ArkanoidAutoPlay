@@ -18,7 +18,9 @@ def ml_loop():
         while len(lowestBrick) > 5:
             lowestBrick.pop()
         for brick in lowestBrick:
-            if brick - lowestBrick[0] > 100:
+            print(brick)
+        for brick in lowestBrick:
+            if brick[1] - lowestBrick[0][1] > 100:
                 lowestBrick.remove(lowestBrick.index(brick))
         average = 0
         for brick in lowestBrick:
@@ -26,7 +28,7 @@ def ml_loop():
         average = average / len(lowestBrick)
 
 
-        if LastXY[1] - scene_info.ball[1] > 0:
+        if LastXY[1] - scene_info.ball[1] > 0 and LastXY[1] > 350:
             # Code for going up
             tickTillPlat = (400 - average) * 2 / 5
             ballXToMove = tickTillPlat * 5
@@ -36,6 +38,7 @@ def ml_loop():
                 finalXDest = scene_info.ball[0] - ballXToMove
 
             if finalXDest >= 400 or finalXDest <= -200 or (finalXDest >= 0 and finalXDest <= 200):
+                print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
                 if scene_info.platform[0] + 20 > 105:
                     comm.send_instruction(scene_info.frame, GameInstruction.CMD_LEFT)
                 elif scene_info.platform[0] + 20 < 95:
@@ -43,16 +46,23 @@ def ml_loop():
                 else:
                     comm.send_instruction(scene_info.frame, GameInstruction.CMD_NONE)
             elif finalXDest < 0:
+                print("BBBBBBBBBBBBBBBBBBBBBBBBBBB")
                 finalXDest = finalXDest * -1
+                if scene_info.platform[0] + 20 > finalXDest + 5:
+                    comm.send_instruction(scene_info.frame, GameInstruction.CMD_LEFT)
+                elif scene_info.platform[0] + 20 < finalXDest - 5:
+                    comm.send_instruction(scene_info.frame, GameInstruction.CMD_RIGHT)
+                else:
+                    comm.send_instruction(scene_info.frame, GameInstruction.CMD_NONE)
             elif finalXDest > 200:
+                print("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCC")
                 finalXDest = 400 - finalXDest
-
-            if scene_info.platform[0] + 20 > finalXDest + 5:
-                comm.send_instruction(scene_info.frame, GameInstruction.CMD_LEFT)
-            elif scene_info.platform[0] + 20 < finalXDest - 5:
-                comm.send_instruction(scene_info.frame, GameInstruction.CMD_RIGHT)
-            else:
-                comm.send_instruction(scene_info.frame, GameInstruction.CMD_NONE)
+                if scene_info.platform[0] + 20 > finalXDest + 5:
+                    comm.send_instruction(scene_info.frame, GameInstruction.CMD_LEFT)
+                elif scene_info.platform[0] + 20 < finalXDest - 5:
+                    comm.send_instruction(scene_info.frame, GameInstruction.CMD_RIGHT)
+                else:
+                    comm.send_instruction(scene_info.frame, GameInstruction.CMD_NONE)
         else:
             # Code for going down
             # Calc ball poition when y = 400
@@ -70,13 +80,26 @@ def ml_loop():
                     FinalXDest = 0 - FinalXDest
                 elif FinalXDest <= -200:
                     FinalXDest += 400
-                    
-            if scene_info.platform[0] + 20 > FinalXDest + 5:
-                comm.send_instruction(scene_info.frame, GameInstruction.CMD_LEFT)
-            elif scene_info.platform[0] + 20 < FinalXDest - 5:
-                comm.send_instruction(scene_info.frame, GameInstruction.CMD_RIGHT)
+            if scene_info.ball[1] < 250:
+                if scene_info.platform[0] + 20 > FinalXDest + 5:
+                    if scene_info.platform[0] + 20 > 160 or scene_info.platform[0] + 20 < 40:
+                        comm.send_instruction(scene_info.frame, GameInstruction.CMD_LEFT)
+                    else:
+                        comm.send_instruction(scene_info.frame, GameInstruction.CMD_NONE)
+                elif scene_info.platform[0] + 20 < FinalXDest - 5:
+                    if scene_info.platform[0] + 20 > 160 or scene_info.platform[0] + 20 < 40:
+                        comm.send_instruction(scene_info.frame, GameInstruction.CMD_RIGHT)
+                    else:
+                        comm.send_instruction(scene_info.frame, GameInstruction.CMD_NONE)
+                else:
+                    comm.send_instruction(scene_info.frame, GameInstruction.CMD_NONE)
             else:
-                comm.send_instruction(scene_info.frame, GameInstruction.CMD_NONE)
+                if scene_info.platform[0] + 20 > FinalXDest + 5:
+                    comm.send_instruction(scene_info.frame, GameInstruction.CMD_LEFT)
+                elif scene_info.platform[0] + 20 < FinalXDest - 5:
+                    comm.send_instruction(scene_info.frame, GameInstruction.CMD_RIGHT)
+                else:
+                    comm.send_instruction(scene_info.frame, GameInstruction.CMD_NONE)
         
         LastXY = scene_info.ball
             
