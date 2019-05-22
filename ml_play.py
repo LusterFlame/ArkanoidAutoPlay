@@ -2,10 +2,12 @@ import arkanoid.communication as comm
 import pickle
 from arkanoid.communication import SceneInfo, GameInstruction
 import numpy as np
+import os.path
 
 def ml_loop():
-    filename = "forestTrained.sav"
-    load_model = pickle.load(open(filename, 'rb'))
+    filename = "forestTrained.sav" 
+    filepath = os.path.join(os.path.dirname(__file__), filename)
+    load_model = pickle.load(open(filepath, 'rb'))
     comm.ml_ready()
 
     while True:
